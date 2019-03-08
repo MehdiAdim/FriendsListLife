@@ -1,6 +1,6 @@
 # FriendsListLife
 ## Facebook Messages Visualization by year,day and hour
-[Site](https://mehdiadim.github.io/FriendsListLife/)
+[Site](https://mehdiadim.github.io/FriendsListLife/) par Mehdi Adim & khalid aissi
 
 ### By year and day
 <img src="circular.png" 
