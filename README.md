@@ -17,3 +17,11 @@ alt=""  border="10" />
 First, you should extract your data from Facebook in JSON format [Site](https://www.facebook.com/your_information/). Once you've got your data ready, you can go on the [webSite](https://mehdiadim.github.io/FriendsListLife/).
 
 Use your own file and explore your own data.
+
+# graph by category
+<img src="graph.png" 
+alt=""  border="10" />
+
+# heatmap per person
+<img src="heat.png" 
+alt=""  border="10" />
