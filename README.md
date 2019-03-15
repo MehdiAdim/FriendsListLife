@@ -26,6 +26,6 @@ The images displayed are random images, from the randomeUser API.
 You can click on any node to view in a heatMap statistics on the number of messages exchanged with this friend since 2016, to return to the graph click anywhere on the heatMap.
 
 # heatmap per person
-<img src="heatmap.png" 
+<img src="heatmap.PNG" 
 alt=""  border="10" />
 The colors reflect the number of messages exchanged per day. 9 colors are used which with a scale that changes from one person to another according to the maximum number of messages exchanged in a day.
