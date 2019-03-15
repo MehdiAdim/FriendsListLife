@@ -19,7 +19,7 @@ First, you should extract your data from Facebook in JSON format [Site](https://
 Use your own file and explore your own data.
 
 # graph by category
-<img src="CaptureGraphe.png" 
+<img src="CaptureGraphe.PNG" 
 alt=""  border="10" />
 In this section we visualize our network on facebook by groups, grouping in relation to the total number of messages exchanged in recent years.
 The images displayed are random images, from the randomeUser API.
