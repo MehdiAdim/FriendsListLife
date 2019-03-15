@@ -1,453 +1,65 @@
 <!DOCTYPE html>
-<head>
-<meta charset="utf-8">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
 
-<div id="radial">
-<svg width="900" height="800" font-family="sans-serif" font-size="10"></svg>
-  </div>
-<div id = "chart">
-  </div>
-  <script src="pre-processing.js"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-</head>
+body, html {
+  height: 100%;
+  line-height: 1.8;
+}
+
+/* Full height image header */
+.bgimg-1 {
+  background-position: center;
+  background-size: cover;
+  background-image: url("https://www.vertical-leap.uk/wp-content/uploads/2018/05/data-viz-1400x800.jpg");
+  min-height: 100%;
+}
+
+.w3-bar .w3-button {
+  padding: 16px;
+}
+</style>
 <body>
-  <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" id = "logo "href="#">FriendListLife</a>
+
+<!-- Header with full-height image -->
+<header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
+  <div class="w3-display-left w3-text-white" style="padding:48px">
+    <span class="w3-jumbo w3-hide-small">Data visualisation MOS 5.5 </span><br>
+    <span class="w3-xxlarge w3-hide-large w3-hide-medium">Start something that matters</span><br>
+    <span class="w3-large">Facebook messenger historique</span>
+    <p><a href="stackedbar.html" class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-opacity w3-hover-opacity-off"  >Voir visualisation</a></p>
+  </div> 
+
+</header>
+
+<!-- About Section -->
+<div class="w3-container" style="padding:80px 16px" id="about">
+  <h3 class="w3-center">ABOUT US</h3>
+  <p class="w3-center w3-large">Ecole centrale de lyon</p>
+  <div class="w3-row-padding w3-center" style="margin-top:64px  ">
+
+
+   <div class="w3-quarter"  style="margin-left:20% ">
+<img src="https://goo.gl/3YLvjD" class="w3-bar-item w3-circle w3-hide-small" style="width:85px">  
+
+<p class="w3-large">Khalid AISSI</p>
+      <p>Etudiant à l'Ecole Centrale de Lyon dans le cadre d'une double diplomation avec l'école des mines de rabat</p>
     </div>
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Home</a></li>
-      <li><a href="graph.html">Graph</a></li>
-      <li><a href="#">About us</a></li>
-      
-    </ul>
+    <div class="w3-quarter"  style="margin-left:10% ">
+<img src="https://scontent-mrs1-1.xx.fbcdn.net/v/t1.0-1/p80x80/11021045_10202353722884870_4461339858708898958_n.jpg?_nc_cat=102&_nc_ht=scontent-mrs1-1.xx&oh=f2fdc5cbe84a6e67d5c9fed3540d6dfd&oe=5D18464E" class="w3-bar-item w3-circle w3-hide-small" style="width:85px"> 
+<p class="w3-large">Mehdi Adim </p>
+      <p>Etudiant en deuxième année master intelligence artificielle à l'Ecole Centrale de Lyon
+</p>
+    </div>
   </div>
-</nav>
-  
-  <input id="file" type="file" name="file" class="inputfile" onchange="read_files(this.files)" style="float:center" webkitdirectory = true>
-  <style> 
-   	
-   a{
-    
-      font-weight: bold;
-    }
-    #file{
-      position: absolute;
-      top: 11%;
-    }
-    #radial{
-      position: absolute;
-      top: 10%;
-    }
-    #chart {
-    position: absolute;
-    top: 25%;
-    left: 50%;
-}
-    #slidr {
-      position : absolute;
-   		 top: 11%;
-   		 left: 40%;
+</div>
 
-    }
-    
-    .yearext{
-      position : absolute;
-      font-size : 20px;
-      top : -5%;
-      left : -44%;
-    }
-    
-    .year{
-      position : absolute;
-      font-size : 30px;
-      top : -19%;
-      left : 125%;
-      color : green;
-      
-    }
-    
-    .hidden {
-        display: none;
-    }
-    div.tooltip {
-        color: #222;
-        background-color: #fff;
-        padding: .5em;
-        text-shadow: #f5f5f5 0 1px 0;
-        border-radius: 2px;
-        opacity: 0.8;
-        position: absolute;
-    }
-  </style>
-  <div id = "slidr">
-    <span class = "yearext">Year : </span>
-    <input id="slider" type="range"  min="2016" max="2019" step="1" />
-    <span id="week" class="year">Year</span>
-	</div>
-  
-<script>
-
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height"),
-    innerRadius = 160,
-    outerRadius = Math.min(width, height) / 2.02006547398656,
-    g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-
-var xScaleOffset = 0;
-var x = d3.scaleBand()
-    .range([xScaleOffset, 2 * Math.PI + xScaleOffset])
-    .align(0);
-
-var y = d3.scaleLinear()
-    .range([innerRadius, outerRadius]);
-
-var z = d3.scaleOrdinal()
-    .range(["#40c534", "#68a7ce"]);
- 
-var tooltip = d3.select('body').append('div')
-            .attr('class', 'hidden tooltip')
- 
-
-var zClasses = ['Message received', 'Message sent'];
-
-d3.csv("data.csv", function(d, i, columns) {
-  d.received = (+d.received);
-  d.sent =  (+d.sent);
-  return d;
-}, loadViz); 
-    
-   
-  function loadViz(data) {
-  
-	console.log(data)
-  var keys = data.columns.slice(1,3);
-  //begin
-  updateViz(2018) // for the beginning
-   
-  function getYearData(data,year){
-    result = data.filter(word => word.date.split('-')[0] == year);
-  result.columns = ["date", "received", "sent"]
-  return result;
-    
-  }
-  
-  
-	 
-
-  
-  // Slider Listner
-        d3.select("#slider").on("input", function() {
-          updateViz(+this.value);
-          
-        })
-  
-        
-        
- function updateViz(year){
-   d3.select('#week').html(+year);
-   
-   //var gi = g.select("g").selectAll("path").data(getYearData(data,year))
-                   
-   //gi.exit().remove();
-   
-   d3.select("svg").selectAll("g").remove();
-   
-   drawMap(getYearData(data,year));
-}
-        
-        
-function drawMap(data){
-  
-   svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height"),
-    innerRadius = 155,
-    outerRadius = Math.min(width, height) / 1.609445376,
-    g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-    var meanMessages = d3.mean(data, function(d) { return d3.sum(keys, function(key) {  return d[key]/2; }); })
-
- 
-  x.domain(data.map(function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return (d.received + d.sent)/2; })]);
-  z.domain(data.columns.slice(1));
- 
-  // Messages
-  msg = g.append('g')
-      .selectAll("g")
-    .data(d3.stack().keys(data.columns.slice(1))(data))
-   
-    msg.enter().append("g")
-      .attr("fill", function(d) { return z(d.key); })
-    .selectAll("path")
-    .data(function(d) { return d; })
-    
-    .enter().append("path")
-    	
-      .attr("d", d3.arc()
-          .innerRadius(function(d) { return y(d[0]/2); })
-          .outerRadius(function(d) { return y(d[1]/2); })
-          .startAngle(function(d) { return x(d.data.date); })
-          .endAngle(function(d) { return x(d.data.date) + x.bandwidth(); })
-          .padAngle(0.0116)
-          .padRadius(innerRadius))
-			    .on('mousemove', function(d) {
-            			
-                    var mouse = d3.mouse(svg.node()).map(function(d) {
-                      
-                      return parseInt(d);
-                    });
-            				  
-                    tool = tooltip.classed('hidden', false)
-                        .attr('style', 'left:' + (mouse[0] + 15) +
-                                'px; top:' + (mouse[1] - 35) + 'px')
-                    tool.html(d.data.date+"<br/>" +"Received : "+d.data.received/2
-                             +"<br/>" +"Sent : "+d.data.sent/2
-                             )
-           					
-                    
-                })
-    			.on('mouseout', function() {
-      // sleep time expects milliseconds
-    function sleep (time) {
-      return new Promise((resolve) => setTimeout(resolve, time));
-    }
-
-    // Usage!
-    sleep(2000).then(() => {
-			tooltip.classed('hidden', true);    });
-
-      })
-    			.on('click',function(d){
- 
-      d3.select("#barChart").remove();
-      recus = d.data["allDayReceived"].split('-')
-      sent = d.data["allDaySent"].split('-')
-      day =  recus.concat(sent);
-      for (var i = 0; i < 48; i++) {
-        day[i] = +day[i]
-      }
-      drawLineChart(to_dayData(day),d.data["date"])
-    })
-  //yAxis and Mean
-
-  var yAxis = g.append("g")
-      .attr("text-anchor", "middle");
-
-  var yTicksValues = d3.ticks(0, 100, 4);
-
-
-  // Mean value line
-  var yMeanTick = yAxis
-    .append("g")
-    .datum([meanMessages]);
-
-  yMeanTick.append("circle")
-      .attr("fill", "none")
-      .attr("stroke", "#C0625E")
-      .attr("stroke-dasharray", "5 3")
-      .attr("r", y);
-
-  var yTick = yAxis
-    .selectAll("g")
-    .data(yTicksValues)
-    .enter().append("g");
-
-  yTick.append("circle")
-      .attr("fill", "none")
-      .attr("stroke", "#ccdcea")
-      .attr("r", y);
-
-//   yTick.append("text")
-//       .attr("y", function(d) { return -y(d); })
-//       .attr("dy", "0.35em")
-//       .attr("fill", "none")
-//       .attr("stroke", "#fff")
-//       .attr("stroke-width", 5)
-//       .text(y.tickFormat(5, "s"));
-
-//   yTick.append("text")
-//       .attr("y", function(d) { return -y(d); })
-//       .attr("dy", "0.35em")
-//       .text(y.tickFormat(5, "s"));
-
-  yAxis.append("text")
-      .attr("y", function(d) { return -y(yTicksValues.pop()); })
-      .attr("dy", "-2em")
-//       .text("label");
-
-  // Labels for xAxis
-
-  var label = g.append("g")
-    .selectAll("g")
-    .data(data)
-    .enter().append("g")
-      .attr("text-anchor", "middle")
-      .attr("transform", function(d) { return "rotate(" + ((x(d.date) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)"; }); 
-
-  label.append("line")
-      .attr("x2", function(d) { 
-    
-    return d.date.split('-')[2] == 1 ? -7 : -4 })
-      .attr("stroke", "#000");
-
-  label.append("text")
-      .attr("transform", function(d) { return (x(d.date) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,16)" : "rotate(-90)translate(0,-9)"; })
-      .text(function(d) {
-     
-    tab = ["January","February","March","April","May","June","July", "August","September","October","November","December"]
-    month = d.date.split('-')[1]
-    day = d.date.split('-')[2]
-    label = tab[month-1]
-    
-        var xlabel = day == 1 ? label : '';
-        return xlabel; });
- 
-// Legend
-  var legend = g.append("g")
-    .selectAll("g")
-    .data(zClasses)
-    .enter().append("g")
-      .attr("transform", function(d, i) { return "translate(-50," + (i - (zClasses.length - 1) / 2) * 25+ ")"; });
-
-  legend.append("circle")
-      .attr("r", 8)
-      .attr("fill", z);
-
-  legend.append("text")
-      .attr("x", 15)
-      .attr("y", 0)
-      .attr("dy", "0.35em")
-      .text(function(d) { return d; });
-  
-}
- 
-  function drawLineChart(dayData,date){
-  var margin = {top: 50, right: 100, bottom: 50, left: 50},
-    width = 800 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-	
-  console.log(dayData)
-  max1 = d3.max(dayData[0].values,function(d) { return d.msg/2; })
-    max2 = d3.max(dayData[1].values,function(d) { return d.msg/2; })
-  
-    max = d3.max([max1,max2])
-  
-    console.log(max)
-  
-	nest = dayData
- 
-  var y = d3.scaleLinear()
-    .domain([0, max])
-    .range([height, 0]);
-
-	var scaleTime = d3.scaleBand().range([0, width])
-  					.domain(d3.range(24));
-
-	var scaleGroupe = d3.scaleBand()
-    .domain(d3.range(2))
-    .range([0, width/nest[0].values.length -2 ]);
-  
-  var scaleColor = d3.scaleOrdinal().range(["#40c534", "#68a7ce"])
-  								.domain(nest.map(function(d) { return d.key; }))
-
-  
-  var svg = d3.select("#chart").append("svg").attr("id","barChart")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	svg.append("g").selectAll("g")
-    .data(nest)
-    .enter().append("g")
-    .style("fill", function(d, i) {  return scaleColor(d.key); })
-    .attr("transform", function(d, i) { return "translate(" +scaleGroupe(i) + ",0)"; })
-    .selectAll("rect")
-    .data(function(d) { return d.values; }) 
-    .enter().append("rect")
-    .attr("width", scaleGroupe.bandwidth())
-    .attr("height", function(d,i) {return height - y(d.msg/2); })
-    .attr("x", function(d, i) { return scaleTime(i); })
-    .attr("y", function(d,i) { return  y(d.msg/2); })
-  	.style("fill-opacity", 1)
-   
-  svg.append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(scaleTime));
-  
-  svg.append("g")
-      .call(d3.axisLeft().scale(y));
-
-  svg.append("text")             
-      .attr("transform",
-            "translate(350,337)")
-      .style("text-anchor", "middle")
-  		.style("font-size","16px")
-      .text("Hours");
-  
-  svg.append("text")             
-      .attr("transform",
-            "translate(350,-20)")
-      .style("text-anchor", "middle")
-  		.style("font-size","20px")
-      .text("The Facebook messages I sent and received in "+date);
-    
-	svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y",-51)
-      .attr("x",-142)
-      .attr("dy", "1em")
-      .style("text-anchor", "middle")
-  		.style("font-size","16px")
-      .text("Number of messages");
-	
-  var legend = svg.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "end")
-      .selectAll("g")
-      .data(nest)
-      .enter().append("g")
-      .attr("transform", function(d, i) { return "translate(80," + i * 20 + ")"; });
-
-  legend.append("rect")
-      .attr("x", width - 19)
-      .attr("width", 19)
-      .attr("height", 19)
-      .attr("fill", function(d, i) {  return scaleColor(d.key); });
-
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9.5)
-      .attr("dy", "0.32em")
-      .text(function(d) { return d.key; });  
-
-
-
-}
-  function to_dayData(tab){
-  dayData = []
-  dayData[0]={};dayData[1]={}
-  dayData[0].key = "received"
-  dayData[1].key = "sent"
-  dayData[0].values = []
-  dayData[1].values = []
-  
-  for (var i = 0; i < 24; i++) {
- 	dayData[0].values[i]={msg : tab[i]}
-  dayData[1].values[i] = {msg : tab[i+24]}
-}
-  return dayData;
-}
-
-}
-
-</script>
 </body>
+</html>

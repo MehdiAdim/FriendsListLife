@@ -1,40 +1,31 @@
-const margin = { top: 60, right: 0, bottom: 100, left: 30 };
-var svg = d3.select("svg"),
-    width = 900 - margin.left - margin.right,
-    height = 1150 - margin.top - margin.bottom;
+  const margin = { top: 60, right: 0, bottom: 100, left: 30 };
+  var svg = d3.select("svg"),
+      width = 900 - margin.left - margin.right,
+      height = 1150 - margin.top - margin.bottom;
 
-var g = svg.append("g")
-    .attr("class", "everything");
+  var g = svg.append("g")
+      .attr("class", "everything");
 
-// svg objects
-var link, node;
-// the data - an object with nodes and links
-var graph;
+  var link, node;
+  var graph;
 
-// load the data
-d3.json("datagraph.json", function(error, _graph) {
-  if (error) throw error;
-  graph = _graph;
-  initializeDisplay();
-  initializeSimulation();
-  console.log(graph);
-});
+  d3.json("datagraph.json", function(error, _graph) {
+    if (error) throw error;
+    graph = _graph;
+    initializeDisplay();
+    initializeSimulation();
+    console.log(graph);
+  });
  
 
+  var simulation = d3.forceSimulation();
 
-//////////// FORCE SIMULATION //////////// 
+  function initializeSimulation() {
+    simulation.nodes(graph.nodes);
+    initializeForces();
+    simulation.on("tick", ticked);
+  }
 
-// force simulator
-var simulation = d3.forceSimulation();
-
-// set up the simulation and event to update locations after each tick
-function initializeSimulation() {
-  simulation.nodes(graph.nodes);
-  initializeForces();
-  simulation.on("tick", ticked);
-}
-
-// values for all forces
 forceProperties = {
     center: {
         x: 0.5,
@@ -71,12 +62,10 @@ forceProperties = {
 
 
 var radius = d3.scaleLinear()
-    .domain([10, 103000])
-    .range([1, 50]);
+               .domain([10, 103000])
+               .range([1, 50]);
 
-// add forces to the simulation
 function initializeForces() {
-    // add forces and associate each with a name
     simulation
         .force("link", d3.forceLink())
         .force("charge", d3.forceManyBody())
@@ -84,13 +73,10 @@ function initializeForces() {
         .force("center", d3.forceCenter())
         .force("forceX", d3.forceX())
         .force("forceY", d3.forceY());
-    // apply properties to each of the forces
     updateForces();
 }
  
-// apply new force properties
 function updateForces() {
-    // get each force by name and update the properties
     simulation.force("center")
         .x(width * forceProperties.center.x)
         .y(height * forceProperties.center.y);
@@ -110,58 +96,49 @@ function updateForces() {
         .y(height * forceProperties.forceY.y);
     simulation.force("link")
         .id(function(d) {return d.id;})
-        .distance(function(d) { return radius(d.source.value) +radius(d.target.value)+ forceProperties.link.distance; })
+        .distance(function(d) { return radius(d.source.value) +radius(d.target.value)+         forceProperties.link.distance; })
         .iterations(forceProperties.link.iterations)
         .links(forceProperties.link.enabled ? graph.links : []);
 
-    // updates ignored until this is run
-    // restarts the simulation (important if simulation has already slowed down)
     simulation.alpha(1).restart();
 }
 
 
-
-//////////// DISPLAY ////////////
-
-// generate the svg objects and force simulation
 function initializeDisplay() {
-  // set the data and properties of link lines
   link = g.append("g")
         .attr("class", "links")
-    .selectAll("path")
-    .data(graph.links)
-    .enter().append("svg:path")
-    .attr("stroke-width",1);
-    link.style('fill', 'none')
-        .style('stroke', 'black')
+        .selectAll("path")
+        .data(graph.links)
+        .enter().append("svg:path")
+        .attr("stroke-width",1);
+  link.style('fill', 'none')
+      .style('stroke', 'black')
       .style("stroke-width", '2px');
-  // set the data and properties of node circles
   
-  genre = ['men','women']
+ genre = ['men','women']
  node = g.append("g")
-        .attr("class", "nodes")
-    .selectAll("image")
-    .data(graph.nodes)
-    .enter().append("image")
-      .attr("xlink:href", function(d) {
+         .attr("class", "nodes")
+         .selectAll("image")
+         .data(graph.nodes)
+         .enter().append("image")
+         .attr("xlink:href", function(d) {
    if (d.img =='https://randomuser.me/api/portraits/med/') 
    {userimg = d.img +genre[Math.floor(Math.random()*2)]+'/'+(Math.floor(Math.random() * 100) + 1)+'.jpg';} 
    else {userimg = d.img;}
    return userimg })
-      .attr("x", function(d) { return -1*((radius(d.value) )+36)/2; })
-      .attr("y", function(d) { return -1*((radius(d.value) )+36)/2; })
-      .attr("width", function(d) { return (radius(d.value) )+36; })
-      .attr("height", function(d) { return (radius(d.value) )+36; })
-      .on("click",(d) => heatmapChart(d.id,userimg))
-        .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
+          .attr("x", function(d) { return -1*((radius(d.value) )+36)/2; })
+          .attr("y", function(d) { return -1*((radius(d.value) )+36)/2; })
+          .attr("width", function(d) { return (radius(d.value) )+36; })
+          .attr("height", function(d) { return (radius(d.value) )+36; })
+          .on("click",(d) => heatmapChart(d.id,userimg))
+          .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
  
-  
   node.append("title")
       .text(function(d) { return d.id; });
-  // visualize the graph
+  
   updateDisplay(); }
 
 
@@ -174,17 +151,11 @@ function zoom_actions(){
     g.attr("transform", d3.event.transform)
 }
 
-// update the display based on the forces (but not positions)
 function updateDisplay() {
-    node
-        .attr("r", forceProperties.collide.radius)
-       
-        .attr("stroke-width", forceProperties.charge.enabled==false ? 0 : Math.abs(forceProperties.charge.strength)/15);
-
- 
+    node.attr("r", forceProperties.collide.radius)
+        .attr("stroke-width", forceProperties.charge.enabled==false ? 0 :    Math.abs(forceProperties.charge.strength)/15);
 }
 
-// update the display positions after each simulation tick
 function ticked() {
     link.attr("d", function(d) {
         var dx = d.target.x - d.source.x,
@@ -198,18 +169,11 @@ function ticked() {
             d.target.y;
     });
 
-    
-        node
-        .attr("transform", function(d) {
-          return "translate(" + d.x + "," + d.y + ")";
-
+        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")";
         });
-    d3.select('#alpha_value').style('flex-basis', (simulation.alpha()*100) + '%');
+   
+  d3.select('#alpha_value').style('flex-basis', (simulation.alpha()*100) + '%');
 }
-
-
-
-//////////// UI EVENTS ////////////
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -228,14 +192,12 @@ function dragended(d) {
   d.fy = null;
 }
 
-// update size-related forces
 d3.select(window).on("resize", function(){
     width = +svg.node().getBoundingClientRect().width;
     height = +svg.node().getBoundingClientRect().height;
     updateForces();
 });
 
-// convenience function to update everything (run after UI input)
 function updateAll() {
     updateForces();
     updateDisplay();
@@ -251,38 +213,33 @@ function updateAll() {
   d3.selectAll(".nav").html("");
   d3.selectAll(".divglob")
     .style("margin-left", "0px")
-    .style("background", "#fffffe")
- 
+    .style("background", "#ffffff")
+    .style("width", "1%") ;
   
-   d3.selectAll(".nav")
+  d3.selectAll(".nav")
     .style("height","0px")
    
-   d3.selectAll(".custom-select")
+  d3.selectAll(".custom-select")
     .style("height","0px")
    
-   
-    d3.selectAll(".right")
-             .style("margin-right", "0px")
+  d3.selectAll(".right")
+    .style("margin-right", "0px")
     
-   d3.selectAll(".friendname")
-     .text('')
-     .style("padding-right", "0px")
-     .style("font-size", "0px")
-     .style("font-family", 'Dancing Script')
-     .style("vertical-align", 'middle')
+  d3.selectAll(".friendname")
+    .text('')
+    .style("padding-right", "0px")
+    .style("font-size", "0px")
+    .style("font-family", 'Dancing Script')
+    .style("vertical-align", 'middle')
           
-   d3.selectAll(".roundedImage").html("");
+  d3.selectAll(".roundedImage").html("");
      
-            
-
-   d3.selectAll(".roundedImage")
-     .style("border",'0px')
-     .style("width" ,'0px')
-     .style("height",'0px')
-  
+  d3.selectAll(".roundedImage")
+    .style("border",'0px')
+    .style("width" ,'0px')
+    .style("height",'0px')
 }
 
-          
         
 const heatmapChart = function(id,image_f) {
            
@@ -296,12 +253,10 @@ const heatmapChart = function(id,image_f) {
   var days = ["JAN", "FEV", "MAR", "AVR", "MAI", "JUI", "JUIL","AOU","SEP","OCT","NOV","DEC"],
       times = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "12", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24","25","26","27","28","29","30","31"];
   
-  // calculate width and height based on window size
   var w = Math.max(Math.min(window.innerWidth, 1000), 500) - margins.left - margins.right - 20,
   gridSize = Math.floor(w / times.length),
 	h = gridSize * (days.length+2);
 
-  //reset the overall font size
 	var newFontSize = w * 62.5 / 900;
 	d3.select("html").style("font-size", newFontSize + "%");
   
@@ -309,14 +264,12 @@ const heatmapChart = function(id,image_f) {
     .style("height","60px")
   	.append("text")
   	.text('left')
-    
    
    var svg = d3.select(".right")
     .style("height","60px")
   	.append("text")
   	.text('right');
   
-  // svg container
   var svg = d3.select("#heatmap")
   	.append("svg")
   	.attr("width", w + margins.top + margins.bottom)
@@ -324,13 +277,13 @@ const heatmapChart = function(id,image_f) {
   	.append("g")
   	.attr("transform", "translate(" + margins.left + "," + margins.top + ")")
     .on("click",(d) => updateAll());
-  
-  // linear colour scale
- 
-  
-  colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"]
-  
-  
+    
+  /*colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"]
+    
+  colors = ["#e0f2fa","#cae9f6","#b4dff2","#9fd6ee","#85cbe9","#70c2e4","#64bce1","#4fb2dd","#39a9d9"]
+*/
+  colors = ["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c",
+            "#f9d057","#f29e2e","#e76818","#d7191c"]
   
   var dayLabels = svg.selectAll(".dayLabel")
   	.data(days)
@@ -354,19 +307,15 @@ const heatmapChart = function(id,image_f) {
     .attr("transform", "translate(" + gridSize / 2 + ", -6)")
     .attr("class", "mono");
     
-    // load data
-    d3.text('dataheat.csv', function(error, raw) {
+  d3.text('dataheat.csv', function(error, raw) {
       var dsv = d3.dsvFormat(',')
       var data = dsv.parse(raw);
-  
-      
-    // Nest stock values by symbol.
-  	  var symbols = d3.nest()
+ 
+    var symbols = d3.nest()
         .key(function(d) { return d.Name; })
         .entries(data);
      
-	  // Parse and caculate some values for each symbols
-      symbols.forEach(function(s) {
+  symbols.forEach(function(s) {
      
       s.values.forEach(function(d) { 
       d.Value = + d.Value; 
@@ -380,122 +329,109 @@ const heatmapChart = function(id,image_f) {
         
     });
       
-      dataset=symbols.filter(function(d){ return d.key == id; })
+      datapers = ["Yassine","khalid","mehdi"]
+      i = Math.floor(Math.random()*2)
+      dataset=symbols.filter(function(d){ return d.key == datapers[i];})
 
-      var Years = ["2015", "2016" ,"2017","2018","2019"];
-      var currentLocationIndex = 0;
+      var Years = ["2016" ,"2017","2018","2019"];
+      var currentYearIndex = 0;
       newdata=dataset[0].values;
-      
       
     var colours = d3.scaleQuantile()
       .domain([0, 8 ,dataset[0].maxValue])
       .range(colors);
       
-    // create location dropdown menu
-    var locationMenu = d3.select("#locationDropdown");
-    locationMenu 
-      .style("height","60px")
-      .append("select")
-      .attr("id", "locationMenu")
-      .selectAll("option")
-        .data(Years)
-        .enter()
-        .append("option")
-        .attr("value", function(d, i) { return i; })
-        .text(function(d) { return d; });
+    var YearMenu = d3.select("#locationDropdown");
+    YearMenu.style("height","60px")
+            .append("select")
+            .attr("id", "YearMenu")
+            .selectAll("option")
+              .data(Years)
+              .enter()
+              .append("option")
+              .attr("value", function(d, i) { return i; })
+              .text(function(d) { return d; });
  
-      var dataperyear = d3.nest()
+    var dataperyear = d3.nest()
       .key(function(d) { return d.Year; })
       .entries(newdata);
-     
-      
-      
-      
-      
-    // function to create the initial heatmap
+
     var drawHeatmap = function(Year) {      
       
     var selectYear = dataperyear.find(function(d) {
         return d.key == Year ;
       });
       
-      
-      var heatmap = svg.selectAll(".hour")
+    var diff = Math.floor(Math.random()*2)+1;
+    var heatmap = svg.selectAll(".rect")
         .data(selectYear.values)
         .enter()
         .append("rect")
         .attr("x", function(d) { return (d.Day-1) * gridSize; })
         .attr("y", function(d) { return (d.Month-1) * gridSize; })
-        .attr("class", "hour bordered")
+        .attr("class", "rect bordered")
         .attr("width", gridSize)
         .attr("height", gridSize)
         .style("stroke", "white")
         .style("stroke-opacity", 0.6)
         .style("fill", function(d) { return colours(d.Value); })
       
-          d3.selectAll(".divglob")
-            .style("margin-left", "200px")
-            .style("background", "#e9ebee")
- 
-          d3.selectAll(".friendname")
-            .text(id)
-            .style("padding-right", "75px")
-            .style("margin-left", "45px")
-            .style("font-size", "40px")
-            .style("font-family", 'Dancing Script')
-            .style("vertical-align", 'middle')
-            .style("text-align", 'center')
-          
-          d3.selectAll(".roundedImage").append("img")
-            .attr("src",image_f )
-            
-           d3.selectAll(".right")
-             .style("margin-right", "60px")
+    
+    d3.selectAll(".divglob")
+      .style("margin-left", "200px")
+      .style("background", "#e9ebee")
+      .style("width", "100%") ;
+    d3.selectAll(".friendname")
+      .text(id)
+      .style("padding-right", "75px")
+      .style("margin-left", "45px")
+      .style("font-size", "40px")
+      .style("font-family", 'Dancing Script')
+      .style("vertical-align", 'middle')
+      .style("text-align", 'center')
+
+    d3.selectAll(".roundedImage").append("img")
+      .attr("src",image_f )
+
+    d3.selectAll(".right")
+      .style("margin-right", "60px")
         
             
-             d3.selectAll(".roundedImage")
-               .style("border", '2px dotted orange')
-               .style("width", '100px')
-               .style("height", '100px')
+    d3.selectAll(".roundedImage")
+      .style("border", '2px dotted orange')
+      .style("width", '100px')
+      .style("height", '100px')
           
          
-      const legend = svg.selectAll(".legend")
-              .data([0].concat(colours.quantiles()),function(d) {return d});
+    const legend = svg.selectAll(".legend")
+    .data([0].concat(colours.quantiles()),function(d) {return d});
 
-      const legend_g = legend.enter().append("g")
-              .attr("class", "legend");
- 
-          legend_g.append("rect")
-            .attr("x", (d, i) => 60 * i)
-            .attr("y", 375)
-            .attr("width", 60)
-            .attr("height", 30 )
-            .style("fill", (d, i) => colors[i]);
+    const legend_g = legend.enter().append("g")
+      .attr("class", "legend");
 
-          legend_g.append("text")
-            .attr("class", "mono")
-            .text((d) => "≥ " + Math.round(d))
-            .attr("x", (d, i) => 60 * i+30/1.5)
-            .attr("y", 375 + 1.5*30);
-      
-      
+      legend_g.append("rect")
+        .attr("x", (d, i) => 60 * i)
+        .attr("y", 375)
+        .attr("width", 60)
+        .attr("height", 30 )
+        .style("fill", (d, i) => colors[i]);
+
+      legend_g.append("text")
+        .attr("class", "mono")
+        .text((d) => "≥ " + Math.round(d))
+        .attr("x", (d, i) => 60 * i+30/1.5)
+        .attr("y", 375 + 1.5*30);
       }
     
-    drawHeatmap(Years[currentLocationIndex]);
-
-      
+    drawHeatmap(Years[currentYearIndex]);
       
       
     var updateHeatmap = function(Year) {
-    //  console.log("currentLocationIndex: " + currentLocationIndex)
-      // filter data to return object of location of interest
       var selectYear = dataperyear.find(function(d) {
           return d.key == Year ;
       });
       
-   
-      // update the data and redraw heatmap
-      var heatmap = svg.selectAll(".hour")
+      var heatmap = svg.selectAll(".rect")
         .data(selectYear.values)
         .transition()
           .duration(500)
@@ -503,43 +439,33 @@ const heatmapChart = function(id,image_f) {
       }
 
     
-    
-    
-    
-    
-    // run update function when dropdown selection changes
-    locationMenu.on("change", function() {
-      // find which location was selected from the dropdown
+    YearMenu.on("change", function() {
       var selectedLocation = d3.select(this)
         .select("select")
         .property("value");
-      currentLocationIndex = +selectedLocation;
-      // run update function with selected location
-      updateHeatmap(Years[currentLocationIndex]);
+      currentYearIndex = +selectedLocation;
+      updateHeatmap(Years[currentYearIndex]);
     });    
 
     d3.selectAll(".nav").on("click", function() {
       if(d3.select(this).classed("left")) {
-        if(currentLocationIndex == 0) {
-          currentLocationIndex = Years.length-1;
+        if(currentYearIndex == 0) {
+          currentYearIndex = Years.length-1;
         } else {
-          currentLocationIndex--;  
+          currentYearIndex--;  
         }
       } else if(d3.select(this).classed("right")) {
-        if(currentLocationIndex == Years.length-1) {
-          currentLocationIndex = 0;
+        if(currentYearIndex == Years.length-1) {
+          currentYearIndex = 0;
         } else {
-          currentLocationIndex++;  
+          currentYearIndex++;  
         }
       }
-      d3.select("#locationMenu").property("value", currentLocationIndex)
-      updateHeatmap(Years[currentLocationIndex]);
+      d3.select("#YearMenu").property("value", currentYearIndex)
+      updateHeatmap(Years[currentYearIndex]);
     })
   })
-    
-           
-      
- }
+}
 
  
 
