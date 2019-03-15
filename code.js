@@ -210,13 +210,13 @@ function updateAll() {
  
   d3.select("#heatmap").html("");
   d3.select("#locationDropdown").html("");
-  d3.selectAll(".nav").html("");
+  d3.selectAll(".navbutton").html("");
   d3.selectAll(".divglob")
     .style("margin-left", "0px")
     .style("background", "#ffffff")
     .style("width", "1%") ;
   
-  d3.selectAll(".nav")
+  d3.selectAll(".navbutton")
     .style("height","0px")
    
   d3.selectAll(".custom-select")
