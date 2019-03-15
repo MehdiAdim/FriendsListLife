@@ -29,7 +29,8 @@ alt=""  border="10" />
 In this section we visualize our network on facebook by groups, grouping in relation to the total number of messages exchanged in recent years.
 The images displayed are random images, from the randomeUser API.
 You can click on any node to view in a heatMap statistics on the number of messages exchanged with this friend since 2016, to return to the graph click anywhere on the heatMap.
-
+the size of the nodes is proportional to the total number of messages exchanged, but given the difference between the total max of messages exchanged by the first and the second person, the difference between the other friends is not visible.
+the realization of this graph was inspired by some source: [Source1](http://www.puzzlr.org/force-graphs-with-d3/) [Source2](https://bl.ocks.org/BTKY/cc89fb129fb586475e57febc0fd693bb) 
 # heatmap per person
 <img src="heatmap.PNG" 
 alt=""  border="10" />
