@@ -2,6 +2,11 @@
 ## Facebook Messages Visualization by year,day and hour
 [Site](https://mehdiadim.github.io/FriendsListLife/) par Mehdi Adim & khalid aissi
 
+### Page Home
+<img src="home.PNG" 
+alt=""  border="10" />
+A short introduction of the developers of this project. a button "See visualization" to see the different visualizations 
+
 ### By year and day
 <img src="circular.png" 
 alt=""  border="10" />
