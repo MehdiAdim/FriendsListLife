@@ -447,7 +447,7 @@ const heatmapChart = function(id,image_f) {
       updateHeatmap(Years[currentYearIndex]);
     });    
 
-    d3.selectAll(".nav").on("click", function() {
+    d3.selectAll(".navbutton").on("click", function() {
       if(d3.select(this).classed("left")) {
         if(currentYearIndex == 0) {
           currentYearIndex = Years.length-1;
