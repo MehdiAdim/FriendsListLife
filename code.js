@@ -466,6 +466,3 @@ const heatmapChart = function(id,image_f) {
     })
   })
 }
-
- 
-
